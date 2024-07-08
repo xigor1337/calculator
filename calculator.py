@@ -2,15 +2,13 @@ import tkinter as tk
 from tkinter import messagebox
 import matplotlib.pyplot as plt
 
-WINDOWS_SIZE = "800x800"
 MAIN_COLOR = "#525252"
 TEXT_COLOR = "#d9d9d9"
+BUTTON_COLOR = "#d6e2ff"
 
 class Template():
     def __init__(self):
         self.root = tk.Tk()
-        self.root.geometry(WINDOWS_SIZE)
-        self.root.title("Calculator")
         self.root.configure(bg=MAIN_COLOR)
 
         # top bar functions
@@ -22,31 +20,15 @@ class Template():
 
         self.menusmenu = tk.Menu(self.menubar, tearoff=0, bg=MAIN_COLOR, fg=TEXT_COLOR)
         self.menusmenu.add_command(label="Calculator", command=self.calculator_option)
-        self.menusmenu.add_command(label="Functions", command=self.functions_option)
+        self.menusmenu.add_command(label="Graph visualizer", command=self.functions_option)
+        self.menusmenu.add_command(label="Informatics values", command=self.informatics_option)
 
         self.menubar.add_cascade(menu=self.filemenu, label="File")
         self.menubar.add_cascade(menu=self.menusmenu, label="Menus")
 
         self.root.config(menu=self.menubar)
 
-    def calculator_option(self):
-        if self.root.state() == 'normal':
-            Main()
-        else:
-            messagebox.showinfo(title="Error", message="You can`t open the same windows twice")
-
-    def functions_option(self):
-        if self.root.state() == 'normal':
-            Functions()
-            print(self.root)
-        else:
-            messagebox.showinfo(title="Error", message="You can`t open the same windows twice")
-
-class Main(Template):
-    def __init__(self):
-        super().__init__()
-
-        # calculator
+    def patter_creator(self):
         # display
         self.view = ""
         self.display = tk.Label(text="", height=5, font=("Arial", 16), bg=MAIN_COLOR, fg=TEXT_COLOR)
@@ -59,65 +41,61 @@ class Main(Template):
         self.calc.columnconfigure(2, weight=1)
         self.calc.columnconfigure(3, weight=1)
 
-        self.button_create("1", 1, 0, self.send_1)
-        self.button_create("2", 1, 1, self.send_2)
-        self.button_create("3", 1, 2, self.send_3)
-        self.button_create("4", 2, 0, self.send_4)
-        self.button_create("5", 2, 1, self.send_5)
-        self.button_create("6", 2, 2, self.send_6)
-        self.button_create("7", 3, 0, self.send_7)
-        self.button_create("8", 3, 1, self.send_8)
-        self.button_create("9", 3, 2, self.send_9)
-
-        self.button_create("+", 0, 0, self.send_sum)
-        self.button_create("-", 0, 1, self.send_subtraction)
-        self.button_create("*", 0, 2, self.send_multiplication)
-        self.button_create("/", 0, 3, self.send_division)
-        self.button_create("0", 1, 3, self.send_0)
-        self.button_create("clear", 2, 3, self.clear)
-        self.button_create("=", 3, 3, self.solution)
-
-        self.calc.pack(fill="x")
-
-        self.root.mainloop()
-
-    def button_create(self, text, row, col, command):
-        self.btn = tk.Button(self.calc, text=text, command=command, height=2, bg="#d6e2ff", bd=1, relief="solid", font=("Arial", 16))
-        self.btn.grid(row=row, column=col, sticky=tk.W + tk.E, padx=2, pady=2)
+        self.button_create("1", 1, 0, lambda: self.send("1"))
+        self.button_create("2", 1, 1, lambda: self.send("2"))
+        self.button_create("3", 1, 2, lambda: self.send("3"))
+        self.button_create("4", 2, 0, lambda: self.send("4"))
+        self.button_create("5", 2, 1, lambda: self.send("5"))
+        self.button_create("6", 2, 2, lambda: self.send("6"))
+        self.button_create("7", 3, 0, lambda: self.send("7"))
+        self.button_create("8", 3, 1, lambda: self.send("8"))
+        self.button_create("9", 3, 2, lambda: self.send("9"))
+        self.button_create("0", 4, 1, lambda: self.send("0"))
+        self.button_create("C", 4, 0, self.clear)
 
     def send(self, value):
         self.view += value
         self.display.config(text=self.view)
 
-    def send_1(self):
-        self.send("1")
+    def button_create(self, text, row, col, command):
+        self.btn = tk.Button(self.calc, text=text, command=command, height=3, bg=BUTTON_COLOR, bd=1, relief="solid", font=("Arial", 16))
+        self.btn.grid(row=row, column=col, sticky=tk.W + tk.E, padx=2, pady=2)
 
-    def send_2(self):
-        self.send("2")
+    def clear(self):
+        self.view = ""
+        self.display.config(text=self.view)
 
-    def send_3(self):
-        self.send("3")
+    def calculator_option(self):
+        self.root.destroy()
+        Main()
 
-    def send_4(self):
-        self.send("4")
+    def functions_option(self):
+        self.root.destroy()
+        Functions()
 
-    def send_5(self):
-        self.send("5")
+    def informatics_option(self):
+        self.root.destroy()
+        Informatics()
 
-    def send_6(self):
-        self.send("6")
 
-    def send_7(self):
-        self.send("7")
+class Main(Template):
+    def __init__(self):
+        # standard calculator
+        super().__init__()
+        self.root.geometry("430x606")
+        self.root.title("Calculator")
 
-    def send_8(self):
-        self.send("8")
+        self.patter_creator()
 
-    def send_9(self):
-        self.send("9")
+        self.button_create("+", 0, 0, self.send_sum)
+        self.button_create("-", 0, 1, self.send_subtraction)
+        self.button_create("*", 0, 2, self.send_multiplication)
+        self.button_create("/", 0, 3, self.send_division)
+        self.button_create("=", 4, 2, self.solution)
 
-    def send_0(self):
-        self.send("0")
+        self.calc.pack(fill="x")
+
+        self.root.mainloop()
 
     def send_sum(self):
         if self.view[-1].isdecimal() == False:
@@ -144,7 +122,7 @@ class Main(Template):
             self.send("/")
 
     def solution(self):
-        #check for errors
+        # check for errors
         if (self.view[0].isdecimal() == False and self.view[0] != "-") or self.view[-1].isdecimal() == False:
             messagebox.showinfo(title="Error", message="Calculation must start and end with a number")
         else:
@@ -207,13 +185,17 @@ class Main(Template):
             self.display.config(text=str(solution))
             self.view = str(solution)
 
-    def clear(self):
-        self.view = ""
-        self.display.config(text=self.view)
 
 class Functions(Template):
     def __init__(self):
+        # graph visializator
         super().__init__()
+        self.root.geometry("600x600")
+        self.root.title("Functions")
+
+        # only separates part of the windows
+        self.separator = tk.Label(self.root, text="", font=("Arial", 16), bg=MAIN_COLOR, fg=TEXT_COLOR)
+        self.separator.pack()
 
         self.inputframe = tk.Frame(self.root)
         self.inputframe.columnconfigure(0, weight=1)
@@ -225,6 +207,9 @@ class Functions(Template):
         self.input_formula = tk.Entry(self.root, font=("Arial", 16), bg=MAIN_COLOR, relief="solid", justify='center')
         self.input_formula.pack(fill="x")
 
+        # only separates part of the windows
+        self.separator = tk.Label(self.root, text="", font=("Arial", 16), bg=MAIN_COLOR, fg=TEXT_COLOR)
+        self.separator.pack()
 
         # range inputs
         self.range_frame = tk.Frame(self.root)
@@ -243,7 +228,11 @@ class Functions(Template):
 
         self.range_frame.pack(fill="x")
 
-        self.btn = tk.Button(self.root, text="plot", command=self.make_function, width=20, height=2, bg="#fec3c3", relief="flat")
+        # only separates part of the windows
+        self.separator = tk.Label(self.root, text="", font=("Arial", 16), bg=MAIN_COLOR, fg=TEXT_COLOR)
+        self.separator.pack()
+
+        self.btn = tk.Button(self.root, text="plot", command=self.make_function, width=20, height=2, bg=BUTTON_COLOR, relief="flat")
         self.btn.pack(pady=5)
 
         self.root.mainloop()
@@ -289,5 +278,113 @@ class Functions(Template):
                 y_axis.append(y)
             plt.plot(x_axis, y_axis, "ro")
             plt.show()
+
+
+class Informatics(Template):
+    def __init__(self):
+        # IT values calculator
+        super().__init__()
+        self.root.geometry("430x790")
+        self.root.title("IT values calculator")
+        self.datatype = "DEC"
+
+        self.patter_creator()
+
+        self.button_create("HEX", 0, 0, self.send_HEX)
+        self.button_create("DEC", 0, 1, self.send_DEC)
+        self.button_create("OCT", 0, 2, self.send_OCT)
+        self.button_create("BIN", 0, 3, self.send_BIN)
+
+        self.button_create("A", 1, 3, lambda: self.send("A"))
+        self.button_create("B", 2, 3, lambda: self.send("B"))
+        self.button_create("C", 3, 3, lambda: self.send("C"))
+        self.button_create("D", 4, 3, lambda: self.send("D"))
+        self.button_create("E", 5, 3, lambda: self.send("E"))
+        self.button_create("F", 6, 3, lambda: self.send("F"))
+
+        self.calc.pack(fill="x")
+        self.root.mainloop()
+
+    def check_datatype(self):
+        # check_HEX = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+        check_DEC = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        check_OCT = ["0", "1", "2", "3", "4", "5", "6", "7"]
+        check_BIN = ["0", "1"]
+        correct = True
+
+        # HEX can`t be inputed wrong
+        if self.datatype == "DEC":
+            for i in str(self.view):
+                if i not in check_DEC:
+                    correct = False
+                    break
+        if self.datatype == "OCT":
+            for i in str(self.view):
+                if i not in check_OCT:
+                    correct = False
+                    break
+        if self.datatype == "BIN":
+            for i in str(self.view):
+                if i not in check_BIN:
+                    correct = False
+                    break
+
+        return correct
+
+    def send_HEX(self):
+        if self.check_datatype() == False:
+            messagebox.showinfo(title="Error", message="There is invalid symbol in the value")
+        else:
+            if self.datatype == "DEC":
+                self.view = hex(int(self.view))[2:].upper()
+            elif self.datatype == "OCT":
+                self.view = hex(int(self.view, 8))[2:].upper()
+            elif self.datatype == "BIN":
+                self.view = hex(int(self.view, 2))[2:].upper()
+
+            self.datatype = "HEX"
+            self.display.config(text=self.view)
+
+    def send_DEC(self):
+        if self.check_datatype() == False:
+            messagebox.showinfo(title="Error", message="There is invalid symbol in the value")
+        else:
+            if self.datatype == "HEX":
+                self.view = int(str(self.view), 16)
+            elif self.datatype == "OCT":
+                self.view = int(self.view, 8)
+            elif self.datatype == "BIN":
+                self.view = int(str(self.view), 2)
+
+            self.datatype = "DEC"
+            self.display.config(text=self.view)
+
+    def send_OCT(self):
+        if self.check_datatype() == False:
+            messagebox.showinfo(title="Error", message="There is invalid symbol in the value")
+        else:
+            if self.datatype == "HEX":
+                self.view = oct(int(self.view, 16))[2:]
+            elif self.datatype == "DEC":
+                self.view = oct(int(self.view))[2:]
+            elif self.datatype == "BIN":
+                self.view =oct(int(self.view, 2))[2:]
+
+            self.datatype = "OCT"
+            self.display.config(text=self.view)
+
+    def send_BIN(self):
+        if self.check_datatype() == False:
+            messagebox.showinfo(title="Error", message="There is invalid symbol in the value")
+        else:
+            if self.datatype == "HEX":
+                self.view = bin(int(self.view, 16))[2:]
+            elif self.datatype == "DEC":
+                self.view = bin(int(self.view))[2:]
+            elif self.datatype == "OCT":
+                self.view = bin(int(self.view, 8))[2:]
+
+            self.datatype = "BIN"
+            self.display.config(text=self.view)
 
 Main()
